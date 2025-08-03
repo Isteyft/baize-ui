@@ -6,7 +6,7 @@
   --baize-popover-border-radius: 4px;
   display: inline-block;
 }
-.er-tooltip {
+.baize-tooltip {
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity var(--baize-transition-duration);
@@ -17,7 +17,7 @@
     opacity: 0;
   }
 
-  .er-tooltip__popper {
+  .baize-tooltip__popper {
     background: var(--baize-popover-bg-color);
     border-radius: var(--baize-popover-border-radius);
     border: 1px solid var(--baize-popover-border-color);
