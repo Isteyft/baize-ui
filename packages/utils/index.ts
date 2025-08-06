@@ -11,4 +11,4 @@ export const typeIconMap = new Map([
 
 export * from "./install"
 export * from "./error";
-// export * from "./style";
+export * from "./style";

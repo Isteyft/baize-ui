@@ -82,6 +82,22 @@ function closeFinal() {
   closeDebounce?.(); // 执行 closeDebounce
 }
 
+const triggerStrategyMap: Map<string, () => void> = new Map();
+triggerStrategyMap.set("hover", () => {
+  events.value["mouseenter"] = openFinal;
+  outerEvents.value["mouseleave"] = closeFinal;
+  dropdownEvents.value["mouseenter"] = openFinal;
+});
+triggerStrategyMap.set("click", () => {
+  events.value["click"] = togglePopper;
+});
+triggerStrategyMap.set("contextmenu", () => {
+  events.value["contextmenu"] = (e) => {
+    e.preventDefault();
+    openFinal();
+  };
+});
+
 //弹出判断
 function togglePopper() {
   visible.value ? closeFinal() : openFinal();
@@ -95,24 +111,27 @@ function setVisible(val: boolean) {
 }
 
 function attachEvents() {
+  // if (props.disabled || props.manual) return;
+  // if (props.trigger === "hover") {
+  //   events.value["mouseenter"] = openFinal;
+  //   outerEvents.value["mouseleave"] = closeFinal;
+  //   dropdownEvents.value["mouseenter"] = openFinal;
+  //   return;
+  // }
+  // if (props.trigger === "click") {
+  //   events.value["click"] = togglePopper;
+  //   return;
+  // }
+  // if (props.trigger === "contextmenu") {
+  //   events.value["contextmenu"] = (e) => {
+  //     e.preventDefault();
+  //     openFinal();
+  //   };
+  //   return;
+  // }
   if (props.disabled || props.manual) return;
-  if (props.trigger === "hover") {
-    events.value["mouseenter"] = openFinal;
-    outerEvents.value["mouseleave"] = closeFinal;
-    dropdownEvents.value["mouseenter"] = openFinal;
-    return;
-  }
-  if (props.trigger === "click") {
-    events.value["click"] = togglePopper;
-    return;
-  }
-  if (props.trigger === "contextmenu") {
-    events.value["contextmenu"] = (e) => {
-      e.preventDefault();
-      openFinal();
-    };
-    return;
-  }
+
+  triggerStrategyMap.get(props.trigger)?.();
 }
 
 let popperInstance: null | Instance;

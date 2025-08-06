@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { BaizeCollapse } from 'baize-ui';
+import { BaizeButton, BaizePopconfirm } from 'baize-ui';
 
+function confrim() {
+  console.log('confrim');
+}
+function cancel() {
+  console.log('cancel');
+}
 </script>
 
 <template>
@@ -23,6 +29,10 @@ import { BaizeCollapse } from 'baize-ui';
         <div>this is content c</div>
       </baize-collapse-item>
     </baize-collapse> -->
+
+    <BaizePopconfirm title="确认删除吗" @confirm="confrim" @cancel="cancel">
+      <baize-button type="primary" size="small">删除</baize-button>
+    </BaizePopconfirm>
 </template>
 
 <style scoped>

@@ -1,4 +1,4 @@
-import {BaizeButton, BaizeButtonGroup, BaizeIcon, BaizeCollapse, BaizeCollapseItem, BaizeAlert, BaizeTooltip} from '@baize-ui/components'
+import {BaizeButton, BaizeButtonGroup, BaizeIcon, BaizeCollapse, BaizeCollapseItem, BaizeAlert, BaizeTooltip, BaizePopconfirm} from '@baize-ui/components'
 import type { Plugin } from 'vue'
 
 export default [
@@ -8,5 +8,6 @@ export default [
   BaizeCollapse, 
   BaizeCollapseItem,
   BaizeAlert,
-  BaizeTooltip
+  BaizeTooltip,
+  BaizePopconfirm
 ] as Plugin[]
