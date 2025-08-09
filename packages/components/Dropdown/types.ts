@@ -2,7 +2,7 @@ import type { VNode, ComputedRef } from "vue";
 import type { TooltipProps } from "../Tooltip/types";
 import type { ButtonType, ButtonSize } from "../Button/types";
 
-export type DropdownCommand = String | number;
+export type DropdownCommand = string | number;
 
 export interface DropdownItemProps {
   command?: DropdownCommand;

@@ -10,7 +10,7 @@ import type {
   DropdownInstance,
   DropdownContext,
 } from "./types";
-// import { useDisabledStyle } from "@baize-ui/hooks";
+import { useDisabledStyle } from "@baize-ui/hooks";
 
 import { DROPDOWN_CTX_KEY } from "./constants.ts";
 
@@ -42,6 +42,7 @@ function handleItemClick(e: DropdownItemProps) {
   !isNil(e.command) && emits("command", e.command);
 }
 
+!TEST && useDisabledStyle();
 provide<DropdownContext>(DROPDOWN_CTX_KEY, {
   handleItemClick,
   size: computed(() => props.size),

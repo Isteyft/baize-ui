@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { addUnit } from "@baize-ui/utils";
-// import { useLocale } from "@baize-ui/hooks";
+import { useLocale } from "@baize-ui/hooks";
 import type { TooltipInstance } from "../Tooltip";
 import type { PopconfirmProps, PopconfirmEmits } from "./types";
 
@@ -26,7 +26,7 @@ const emits = defineEmits<PopconfirmEmits>();
 const tooltipRef = ref<TooltipInstance>();
 const style = computed(() => ({ width: addUnit(props.width) }));
 
-// const locale = useLocale();
+const locale = useLocale();
 
 function hidePopper() {
   tooltipRef.value?.hide();
@@ -59,8 +59,7 @@ function cancel(e: MouseEvent) {
             :type="cancelButtonType"
             @click="cancel"
           >
-            <!-- {{ cancelButtonText || locale.t("popconfirm.cancelButtonText") }} -->
-            no
+            {{ cancelButtonText || locale.t("popconfirm.cancelButtonText") }}
           </baize-button> 
           <!-- 确认按钮 -->
           <baize-button
@@ -69,8 +68,7 @@ function cancel(e: MouseEvent) {
             :type="confirmButtonType"
             @click="confrim"
           >
-            <!-- {{ confirmButtonText || locale.t("popconfirm.confirmButtonText") }} -->
-            yes
+            {{ confirmButtonText || locale.t("popconfirm.confirmButtonText") }}
           </baize-button>
         </div>
       </div>

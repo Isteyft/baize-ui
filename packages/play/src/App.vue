@@ -7,6 +7,25 @@ function confrim() {
 function cancel() {
   console.log('cancel');
 }
+
+import { ja, ko, en, zhCn, zhTw, BaizeConfigProvider } from "baize-ui";
+import { get } from "lodash-es";
+
+import { computed, ref } from "vue";
+
+const language = ref("");
+const langMap = {
+  ja,
+  ko,
+  en,
+  zhCn,
+  zhTw,
+} as const;
+const locale = computed(() => get(langMap, language.value));
+const changelang = () => {
+  const l = ["zhCn", "zhTw", "ko", "en", "ja"];
+  language.value = l[(l.indexOf(language.value) + 1) % l.length];
+};
 </script>
 
 <template>
@@ -33,6 +52,16 @@ function cancel() {
     <BaizePopconfirm title="确认删除吗" @confirm="confrim" @cancel="cancel">
       <baize-button type="primary" size="small">删除</baize-button>
     </BaizePopconfirm>
+
+
+<baize-button @click="changelang" type="info" style="margin-right: 20px">
+  change language
+</baize-button>
+  <baize-config-provider :locale="locale">
+    <baize-popconfirm title="Are you shure to delete this item?">
+      <baize-button>Delete</baize-button>
+    </baize-popconfirm>
+  </baize-config-provider>
 </template>
 
 <style scoped>

@@ -4,16 +4,16 @@ import { each } from "lodash-es";
 // 定义一个类型 SFCWithInstall，它是一个联合类型，表示一个组件既可以是一个 Vue 组件，也可以是一个 Vue 插件
 type SFCWithInstall<T> = T & Plugin;
 
-// 定义一个函数 makeInstaller，用于创建一个插件安装函数（传值也是plugin插件
-export function makeInstaller(components: Plugin[]) {
-  //给每个plugin遍历并且use他，就不用一个个use
-  const install = (app: App) =>
-    each(components, (c) => {
-      app.use(c);
-    });
+// // 定义一个函数 makeInstaller，用于创建一个插件安装函数（传值也是plugin插件
+// export function makeInstaller(components: Plugin[]) {
+//   //给每个plugin遍历并且use他，就不用一个个use
+//   const install = (app: App) =>
+//     each(components, (c) => {
+//       app.use(c);
+//     });
 
-  return install;
-}
+//   return install;
+// }
 
 // 定义一个泛型函数 withInstall，用于为 Vue 组件添加 install 方法
 export const withInstall = <T>(component: T) => {
