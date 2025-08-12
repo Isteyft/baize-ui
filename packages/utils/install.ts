@@ -27,3 +27,11 @@ export const withInstall = <T>(component: T) => {
   // 返回注册过的组件
   return component as SFCWithInstall<T>;
 };
+
+
+export const withInstallFunction = <T>(fn: T, name: string) => {
+  (fn as SFCWithInstall<T>).install = (app: App) => {
+    app.config.globalProperties[name] = fn;
+  };
+  return fn as SFCWithInstall<T>;
+};

@@ -3,7 +3,7 @@ import type { MessageProps, MessageCompInstance } from "./types";
 import { computed, onMounted, ref, Transition, watch } from "vue";
 import { getLastBottomOffset } from "./methods";
 import { delay, bind } from "lodash-es";
-// import { useOffset, useEventListener } from "@baize-ui/hooks";
+import { useOffset, useEventListener } from "@baize-ui/hooks";
 import { addUnit } from "@baize-ui/utils";
 import { typeIconMap, RenderVnode } from "@baize-ui/utils";
 import BaizeIcon from "../Icon/Icon.vue";
@@ -38,6 +38,7 @@ const customStyle = computed(() => ({
   zIndex: props.zIndex,
 }));
 
+
 let timer: number;
 function startTimmer() {
   if (props.duration === 0) return;
@@ -52,9 +53,14 @@ function close() {
   visible.value = false;
 }
 
-// watch(visible, val => {
-    
-// })
+watch(visible, (val) => {
+  if (!val) boxHeight.value = -props.offset; // 使得退出的动画更加流畅
+});
+
+useEventListener(document, "keydown", (e: Event) => {
+  const { code } = e as KeyboardEvent;
+  if (code === "Escape") close(); //esc 关闭
+});
 
 onMounted(() => {
   visible.value = true;
@@ -70,6 +76,7 @@ defineExpose<MessageCompInstance>({
 <template>
   <Transition
     :name="props.transitionName"
+    @enter="boxHeight = messageRef!.getBoundingClientRect().height"
     @aftbaize-leave="!visible && onDestory()" 
   >
     <div
@@ -89,7 +96,7 @@ defineExpose<MessageCompInstance>({
       <baize-icon class="baize-message__icon" :icon="iconName" />
       <div class="baize-message__content">
         <slot>
-          <rendbaize-vnode v-if="message" :vNode="message" />
+          <render-vnode v-if="message" :vNode="message" />
         </slot>
       </div>
       <div class="baize-message__close" v-if="showClose">

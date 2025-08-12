@@ -1,4 +1,4 @@
-import { isVNode, render, h, shallowReactive } from "vue";
+import { isVNode, render, h, shallowReactive, createVNode } from "vue";
 import type {
   CreateMessageProps,
   MessageInstance,
@@ -10,12 +10,12 @@ import type {
   MessageType,
 } from "./types";
 import { messageTypes } from "./types";
-// import { useId, useZIndex } from "@baize-ui/hooks";
+import { useId, useZIndex } from "@baize-ui/hooks";
 import { isString, findIndex, set, each, get, find } from "lodash-es";
 import MessageConstructor from "./Message.vue";
 
 const instances: MessageInstance[] = shallowReactive([]);
-// const { nextZIndex } = useZIndex();
+const { nextZIndex } = useZIndex();
 
 export const messageDefaults = {
   type: "info",
@@ -34,7 +34,7 @@ const normalizedOptions = (opts: MessageParams): CreateMessageProps => {
 };
 let seed = 0
 const createMessage = (props: CreateMessageProps):MessageInstance => { 
-    const id = `message_${seed++}`
+    const id = useId().value
     const container = document.createElement('div')
 
     const destory = () => { 
@@ -47,10 +47,10 @@ const createMessage = (props: CreateMessageProps):MessageInstance => {
   const _props: MessageProps = {
     ...props,
     id,
-    // zIndex: nextZIndex(),
-    zIndex: 200,
+    zIndex: nextZIndex(),
     onDestory: destory,
   };
+  // const vnode = createVNode(MessageConstructor, {props: _props});
   const vnode = h(MessageConstructor, _props);
 
   render(vnode, container);

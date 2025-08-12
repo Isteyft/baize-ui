@@ -3,8 +3,8 @@ import useEventListener from "./useEventListener";
 import useDisabledStyle from "./useDisabledStyle";
 // import useFocusController from "./useFocusController";
 import useLocale from "./useLocale";
-// import useOffset from "./useOffset";
-// import useZIndex from "./useZIndex";
+import useOffset from "./useOffset";
+import useZIndex from "./useZIndex";
 // import useProp from "./useProp";
 import useId from "./useId";
 
@@ -13,8 +13,8 @@ export {
   useEventListener,
   useDisabledStyle,
 //   useFocusController,
-//   useZIndex,
-//   useOffset,
+  useZIndex,
+  useOffset,
   useLocale,
 //   useProp,
   useId,
