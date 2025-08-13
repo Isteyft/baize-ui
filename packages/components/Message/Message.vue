@@ -21,7 +21,6 @@ const props = withDefaults(defineProps<MessageProps>(), {
 
 const visible = ref(false);
 const messageRef = ref<HTMLDivElement>();
-
 // div 高度
 const boxHeight = ref(0);
 
@@ -75,9 +74,9 @@ defineExpose<MessageCompInstance>({
 
 <template>
   <Transition
-    :name="props.transitionName"
+    :name="transitionName"
     @enter="boxHeight = messageRef!.getBoundingClientRect().height"
-    @aftbaize-leave="!visible && onDestory()" 
+    @after-leave="!visible && onDestory()"
   >
     <div
       ref="messageRef"

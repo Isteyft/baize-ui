@@ -8,7 +8,7 @@
     "story": "pnpm --filter @baize-ui/play storybook",
     "docs:dev": "pnpm --filter @baize-ui/docs dev",
     "docs:build": "pnpm --filter @baize-ui/docs build",
-    "test": "run-s test-utils test-comp",
+    "test": "run-s test-utils test-comp test-hooks",
     "test-comp": "cross-env NODE_ENV=test pnpm --filter @baize-ui/components test",
     "test-utils": "cross-env NODE_ENV=test pnpm --filter @baize-ui/utils test",
     "test-hooks": "cross-env NODE_ENV=test pnpm --filter @baize-ui/hooks test",

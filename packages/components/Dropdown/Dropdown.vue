@@ -62,7 +62,7 @@ defineExpose<DropdownInstance>({
       ref="tooltipRef"
       v-bind="tooltipProps"
       :virtual-triggering="splitButton" 
-      :virtual-ref="triggerRef?.ref.value"  
+      :virtual-ref="triggerRef?.ref?.value"  
       @visible-change="$emit('visible-change', $event)"
     >
       <baize-button-group
