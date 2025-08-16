@@ -1,0 +1,184 @@
+import { resolve } from "path";
+import { ref, createApp, reactive, nextTick } from "vue";
+import type { LoadingOptions, LoadingOptionsResolved } from "./types";
+import LoadingComp from "./Loading.vue";
+import { useZIndex } from "@baize-ui/hooks";
+import { defer, delay, isNil, isString } from "lodash-es";
+
+const RELATIVE_CLASS = "baize-loading-parent--relative" as const;
+const HIDDEN_CLASS = "baize-loading-parent--hiden" as const;
+const LOADING_NUMB_KEY = "baize-loading-numb" as const;
+
+const instanceMap: Map<HTMLElement, LoadingInstance> = new Map();
+const { nextZIndex } = useZIndex(3000);
+
+function createLoading(opts: LoadingOptionsResolved) {
+  const visible = ref(opts.visible);
+  const afterLeaveFlag = ref(false);
+  const handleAfterLeave = () => {
+    if (!afterLeaveFlag.value) return; //第一次可能还没真正离开，第二次在销毁
+    destory();
+  };
+  const data = reactive({
+    ...opts,
+    onAfterLeave: handleAfterLeave,
+  });
+
+  const setText = (text: string) => (data.text = text);
+
+  const destory = () => {
+    const target = data.target;
+    subtLoadingNumb(target);
+    if (getLoadingNumb(target)) return;
+    delay(() => {
+      // 从父级节点remove
+      removeRelativeClass(target);
+      removeHiddenClass(target);
+    }, 1);
+    instanceMap.delete(target ?? document.body);
+    vm.$el?.parentNode?.removeChild(vm.$el);
+    app.unmount();
+  };
+
+  let afterLeaveTimer: number;
+
+  const close = () => {
+    if (opts.beforeClose && !opts.beforeClose()) return;
+
+    afterLeaveFlag.value = true;
+    clearTimeout(afterLeaveTimer);
+    afterLeaveTimer = defer(handleAfterLeave);
+
+    visible.value = false;
+    opts.closed?.();
+  };
+
+  const app = createApp(LoadingComp, {
+    ...data,
+    zIndex: data.fullscreen ? nextZIndex() : void 0,
+    visible,
+  });
+  const vm = app.mount(document.createElement("div"));
+  return {
+    get $el(): HTMLElement {
+      return vm.$el;
+    },
+    vm,
+    close,
+    visible,
+    setText,
+  };
+}
+
+function resolveOptions(opts: LoadingOptions): LoadingOptionsResolved {
+  let target: HTMLElement;
+  if (isString(opts.target)) {
+    //如果字符串就选择器
+    target = document.querySelector(opts.target) ?? document.body;
+  } else {
+    target = opts.target || document.body;
+  }
+  return {
+    parent: target === document.body || opts.body ? document.body : target,
+    background: opts.background ?? "rgba(0, 0, 0, 0.5)",
+    spinner: opts.spinner,
+    text: opts.text,
+    fullscreen: target === document.body && (opts.fullscreen ?? true),
+    lock: opts.lock ?? false,
+    visible: opts.visible ?? true,
+    target,
+  };
+}
+function addRelativeClass(target: HTMLElement = document.body) {
+  target.classList.add(RELATIVE_CLASS);
+}
+
+function removeRelativeClass(target: HTMLElement = document.body) {
+  target.classList.remove(RELATIVE_CLASS);
+}
+
+function addHiddenClass(target: HTMLElement = document.body) {
+  target.classList.add(HIDDEN_CLASS);
+}
+
+function removeHiddenClass(target: HTMLElement = document.body) {
+  target.classList.remove(HIDDEN_CLASS);
+}
+
+function getLoadingNumb(target: HTMLElement = document.body) {
+  return target.getAttribute(LOADING_NUMB_KEY);
+}
+
+function removeLoadingNumb(target: HTMLElement = document.body) {
+  target.removeAttribute(LOADING_NUMB_KEY);
+}
+
+function addLoadingNumb(target: HTMLElement = document.body) {
+  const numb = getLoadingNumb(target) ?? "0";
+  target.setAttribute(LOADING_NUMB_KEY, `${Number.parseInt(numb) + 1}`);
+}
+
+function subtLoadingNumb(target: HTMLElement = document.body) {
+  const numb = getLoadingNumb(target);
+  if (numb) {
+    const newNumb = Number.parseInt(numb) - 1;
+    if (newNumb === 0) {
+      // 关闭loading
+      removeLoadingNumb(target);
+    } else {
+      target.setAttribute(LOADING_NUMB_KEY, `${newNumb}`);
+    }
+  }
+}
+function addClass(
+  options: LoadingOptions,
+  parent: HTMLElement = document.body
+) {
+  if (options.lock) {
+    addHiddenClass(parent);
+  } else {
+    removeHiddenClass(parent);
+  }
+
+  addRelativeClass(parent);
+}
+
+let fullscreenInstance: LoadingInstance | null = null;
+export type LoadingInstance = ReturnType<typeof createLoading>;
+export function Loading(options: LoadingOptions = {}) {
+  const resolved = resolveOptions(options);
+  const target = resolved.parent ?? document.body;
+  // 存在全屏实例，则直接返回，算是一个单例模式
+  if (resolved.fullscreen && !isNil(fullscreenInstance)) {
+    return fullscreenInstance;
+  }
+  addLoadingNumb(resolved?.parent);
+  if (instanceMap.has(target)) {
+    // 存在实例，则直接返回
+    return instanceMap.get(target)!;
+  }
+
+  const instance = createLoading({
+    ...resolved,
+    closed: () => {
+      resolved.closed?.();
+
+      if (resolved.fullscreen) {
+        // 销毁全屏实例
+        fullscreenInstance = null;
+      }
+    },
+  });
+
+  addClass(options, resolved?.parent);
+  resolved.parent?.appendChild(instance.$el);
+
+  // 挂在上去，给可见性变换
+  nextTick(() => (instance.visible.value = !!resolved.visible));
+
+  if (resolved.fullscreen) {
+    fullscreenInstance = instance;
+  }
+  instanceMap.set(target, instance);
+  return instance;
+}

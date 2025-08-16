@@ -1,17 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { nextTick } from "vue";
-import { message, closeAll } from './methods'
-export const rAF = async () => {
-  return new Promise((res) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(async () => {
-        res(null);
-        await nextTick();
-      });
-    });
-  });
-};
-
+import { message, closeAll } from './methods';
+import { rAF } from "@baize-ui/utils";
 function getTopValue(element: Element) {
     const styles = window.getComputedStyle(element);
     const topValue = styles.getPropertyValue("top");
