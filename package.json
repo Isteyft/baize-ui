@@ -4,6 +4,10 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
+        "dev": "pnpm --filter @baize-ui/play dev",
+        "docs:dev": "pnpm --filter @baize-ui/docs dev",
+        "docs:build": "pnpm --filter @baize-ui/docs build",
+        "test": "echo \"todo\"",
         "lint": "eslint \"{packages,apps}/**/*.{js,jsx,ts,tsx}\"",
         "spellcheck": "cspell lint --dot --gitignore --color --cache --show-suggestions \"(packages|apps)/**/*.@(html|js|cjs|mjs|ts|tsx|css|scss|md)\"",
         "typecheck": "tsc --noEmit",

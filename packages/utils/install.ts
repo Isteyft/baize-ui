@@ -1,0 +1,17 @@
+import { each } from 'lodash-es'
+import type { App, Plugin } from 'vue'
+
+type SFCWithInstall<T> = T & Plugin
+export function makeInstaller(components: Plugin[]) {
+    const installer = (app: App) => each(components, c => app.use(c))
+    return installer as Plugin
+}
+
+export const withInstall = <T>(component: T) => {
+    ;(component as SFCWithInstall<T>).install = (app: App) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const name = (component as any)?.name || 'UnnamedComponent'
+        app.component(name, component as SFCWithInstall<T>)
+    }
+    return component as SFCWithInstall<T>
+}
